@@ -1,0 +1,50 @@
+import contextlib
+import subprocess
+from enum import StrEnum
+
+
+class DefaultBaseBranchName(StrEnum):
+    MAIN = "main"
+    MASTER = "master"
+
+
+def deduce_base_branch_name() -> str:
+    """Attempts to deduce the name of the base branch by looking at the remote tracking HEAD."""
+
+    with contextlib.suppress(subprocess.CalledProcessError):
+        result = subprocess.run(
+            ["git", "rev-parse", "--abbrev-ref", "origin/HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        remote_head = result.stdout.strip()
+
+        if "main" in remote_head:
+            return DefaultBaseBranchName.MAIN
+
+        if "master" in remote_head:
+            return DefaultBaseBranchName.MASTER
+
+    return DefaultBaseBranchName.MAIN
+
+
+def sync_base_branch(branch_name: str) -> None:
+    """Safely updates the base branch (the branch being branched off of) before work begins."""
+
+    subprocess.run(["git", "checkout", branch_name], check=True)
+    subprocess.run(["git", "pull"], check=True)
+
+
+def create_and_checkout_branch(new_branch_name: str, base_branch_name: str | None = None) -> None:
+    """Syncs the base workspace and initialises the new local tracking branch."""
+
+    # 1. If no base branch is specified, deduce it from the current workspace
+    base_branch: str = base_branch_name or deduce_base_branch_name()
+
+    # 2. Updates your local base tracking branch first
+    sync_base_branch(base_branch)
+
+    # 3. Spins up the new feature branch cleanly off the freshly updated base branch
+    subprocess.run(["git", "checkout", "-b", new_branch_name], check=True)
