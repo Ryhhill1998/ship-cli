@@ -1,21 +1,23 @@
 import config
 import jira
 import git
+import utils
 
 
 def main():
-    jira_config: config.JiraConfig = config.load_jira_config()
-    # github_config: config.GithubConfig = config.load_github_config()
+    settings: config.Settings = config.load_settings()
+    jira_config = settings.jira
+
+    if jira_config is None:
+        raise ValueError("Jira configuration is missing.")
 
     ticket: jira.JiraTicket = jira.get_ticket(
-        base_url=jira_config.jira_base_url,
+        base_url=jira_config.base_url,
         ticket_key="KAN-1",
-        email=jira_config.jira_email,
-        api_key=jira_config.jira_api_key,
+        email=jira_config.email,
+        api_key=jira_config.api_key,
     )
-    print(ticket)
-
-    branch_name = f"{ticket.issue_type}/{ticket.key}".lower()
+    branch_name = utils.create_branch_slug(ticket)
     git.create_and_checkout_branch(branch_name)
 
 

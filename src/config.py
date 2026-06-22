@@ -1,38 +1,34 @@
-import os
-from dataclasses import dataclass
+import json
+from pathlib import Path
+from pydantic import BaseModel, Field, ValidationError
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
-
-@dataclass
-class JiraConfig:
-    jira_base_url: str
-    jira_email: str
-    jira_api_key: str
+CONFIG_FILE = Path.home() / ".ship" / "config.json"
 
 
-@dataclass
-class GithubConfig:
-    github_access_token: str
+class JiraConfig(BaseModel):
+    base_url: str
+    email: str
+    api_key: str
 
 
-def load_jira_config() -> JiraConfig:
+class GithubConfig(BaseModel):
+    access_token: str
+
+
+class Settings(BaseModel):
+    jira: JiraConfig | None = None
+    github: GithubConfig | None = None
+
+
+def load_settings() -> Settings:
     try:
-        jira_base_url = os.environ["JIRA_BASE_URL"]
-        jira_email = os.environ["JIRA_EMAIL"]
-        jira_api_key = os.environ["JIRA_API_KEY"]
-    except KeyError as e:
-        raise ValueError(f"Missing Jira environment variable: {e}")
-    else:
-        return JiraConfig(jira_base_url, jira_email, jira_api_key)
-
-
-def load_github_config() -> GithubConfig:
-    try:
-        github_access_token = os.environ["GITHUB_ACCESS_TOKEN"]
-    except KeyError as e:
-        raise ValueError(f"Missing Github environment variable: {e}")
-    else:
-        return GithubConfig(github_access_token)
+        with open(CONFIG_FILE, "r") as f:
+            data = json.load(f)
+            
+        return Settings.model_validate(data)
+    except FileNotFoundError:
+        raise SystemExit(f"No configuration file found. Please create one at {CONFIG_FILE}")
+    except json.JSONDecodeError:
+        raise ValueError(f"Config file at {CONFIG_FILE} is not valid JSON.")
+    except ValidationError as e:
+        raise ValueError(f"Invalid configuration settings in {CONFIG_FILE}:\n{e}")

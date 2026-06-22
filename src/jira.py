@@ -1,14 +1,27 @@
 from dataclasses import dataclass
+from enum import StrEnum
 
 import requests
 from requests.auth import HTTPBasicAuth
 
 
+class IssueType(StrEnum):
+    BUG = "Bug"
+    INCIDENT = "Incident"
+    STORY = "Story"
+    TASK = "Task"
+    NEW_FEATURE = "New Feature"
+    IMPROVEMENT = "Improvement"
+    REFACTOR = "Refactor"
+    SPIKE = "Spike"
+    CHORE = "Chore"
+
+
 @dataclass
 class JiraTicket:
     key: str
-    issue_type: str
     summary: str
+    issue_type: IssueType
 
 
 def get_ticket(base_url: str, ticket_key: str, email: str, api_key: str) -> JiraTicket:
