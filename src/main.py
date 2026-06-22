@@ -1,10 +1,12 @@
+import typer
+
 import config
 import jira
 import git
 import utils
 
 
-def main():
+def main(ticket_id: str):
     settings: config.Settings = config.load_settings()
     jira_config = settings.jira
 
@@ -13,7 +15,7 @@ def main():
 
     ticket: jira.JiraTicket = jira.get_ticket(
         base_url=jira_config.base_url,
-        ticket_key="KAN-1",
+        ticket_key=ticket_id,
         email=jira_config.email,
         api_key=jira_config.api_key,
     )
@@ -22,4 +24,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    typer.run(main)
