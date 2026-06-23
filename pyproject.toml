@@ -15,3 +15,6 @@ dependencies = [
 test = [
     "ruff>=0.15.18",
 ]
+
+[project.scripts]
+ship = "src.main:main"

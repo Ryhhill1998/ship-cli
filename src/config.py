@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, ValidationError
 
 CONFIG_FILE = Path.home() / ".ship" / "config.json"
 
@@ -11,13 +11,8 @@ class JiraConfig(BaseModel):
     api_key: str
 
 
-class GithubConfig(BaseModel):
-    access_token: str
-
-
 class Settings(BaseModel):
     jira: JiraConfig | None = None
-    github: GithubConfig | None = None
 
 
 def load_settings() -> Settings:

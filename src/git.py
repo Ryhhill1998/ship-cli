@@ -40,11 +40,15 @@ def sync_base_branch(branch_name: str) -> None:
 def create_and_checkout_branch(new_branch_name: str, base_branch_name: str | None = None) -> None:
     """Syncs the base workspace and initialises the new local tracking branch."""
 
-    # 1. If no base branch is specified, deduce it from the current workspace
-    base_branch: str = base_branch_name or deduce_base_branch_name()
+    # 1. Try switching to the new branch first
+    try:
+        subprocess.run(["git", "checkout", new_branch_name], check=True)  # This will fail if the branch doesn't exist
+    except subprocess.CalledProcessError:
+        # 2. If no base branch is specified, deduce it from the current workspace
+        base_branch: str = base_branch_name or deduce_base_branch_name()
 
-    # 2. Updates your local base tracking branch first
-    sync_base_branch(base_branch)
+        # 3. Updates your local base tracking branch first
+        sync_base_branch(base_branch)
 
-    # 3. Spins up the new feature branch cleanly off the freshly updated base branch
-    subprocess.run(["git", "checkout", "-b", new_branch_name], check=True)
+        # 4. Spins up the new feature branch cleanly off the freshly updated base branch
+        subprocess.run(["git", "checkout", "-b", new_branch_name], check=True)
