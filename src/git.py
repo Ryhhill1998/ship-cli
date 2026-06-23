@@ -19,15 +19,15 @@ def deduce_base_branch_name() -> str:
             text=True,
         )
 
-        remote_head = result.stdout.strip()
+        remote_head = result.stdout.replace("origin/", "")
 
-        if "main" in remote_head:
+        if remote_head == "main":
             return DefaultBaseBranchName.MAIN
 
-        if "master" in remote_head:
+        if remote_head == "master":
             return DefaultBaseBranchName.MASTER
 
-    return DefaultBaseBranchName.MAIN
+    raise ValueError("Could not deduce the base branch name. Please specify it manually.")
 
 
 def sync_base_branch(branch_name: str) -> None:
