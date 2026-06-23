@@ -13,7 +13,7 @@ def deduce_base_branch_name() -> str:
 
     with contextlib.suppress(subprocess.CalledProcessError):
         result = subprocess.run(
-            ["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], check=True, text=True
+            ["git", "rev-parse", "--abbrev-ref", "origin/HEAD"], check=True, capture_output=True, text=True
         )
 
         remote_head = result.stdout.replace("origin/", "").strip()
