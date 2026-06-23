@@ -247,7 +247,7 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
-test = [
+dev = [
     { name = "ruff" },
 ]
 
@@ -259,7 +259,7 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
-test = [{ name = "ruff", specifier = ">=0.15.18" }]
+dev = [{ name = "ruff", specifier = ">=0.15.18" }]
 
 [[package]]
 name = "typer"

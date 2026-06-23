@@ -19,10 +19,12 @@ def load_settings() -> Settings:
     try:
         with open(CONFIG_FILE, "r") as f:
             data = json.load(f)
-            
+
         return Settings.model_validate(data)
     except FileNotFoundError:
-        raise SystemExit(f"No configuration file found. Please create one at {CONFIG_FILE}")
+        raise SystemExit(
+            f"No configuration file found. Please create one at {CONFIG_FILE}"
+        )
     except json.JSONDecodeError:
         raise ValueError(f"Config file at {CONFIG_FILE} is not valid JSON.")
     except ValidationError as e:
