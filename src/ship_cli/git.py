@@ -19,7 +19,7 @@ def deduce_base_branch_name() -> str:
             text=True,
         )
 
-        remote_head = result.stdout.replace("origin/", "")
+        remote_head = result.stdout.replace("origin/", "").strip()
 
         if remote_head == "main":
             return DefaultBaseBranchName.MAIN

@@ -1,6 +1,6 @@
 import re
 
-import jira
+from . import jira
 
 PREFIX_MAP = {
     jira.IssueType.BUG: "fix",

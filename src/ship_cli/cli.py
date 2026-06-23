@@ -1,12 +1,15 @@
 import typer
 
-import config
-import jira
-import git
-import utils
+from . import config
+from . import jira
+from . import git
+from . import utils
+
+app = typer.Typer()
 
 
-def main(ticket_id: str):
+@app.command()
+def start(ticket_id: str):
     settings: config.Settings = config.load_settings()
     jira_config = settings.jira
 
@@ -24,4 +27,4 @@ def main(ticket_id: str):
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app()

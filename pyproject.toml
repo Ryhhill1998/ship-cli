@@ -6,7 +6,6 @@ readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "pydantic>=2.13.4",
-    "python-dotenv>=1.2.2",
     "requests>=2.34.2",
     "typer>=0.26.7",
 ]
@@ -17,4 +16,8 @@ test = [
 ]
 
 [project.scripts]
-ship = "src.main:main"
+ship = "ship_cli.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.11.7,<0.12.0"]
+build-backend = "uv_build"
